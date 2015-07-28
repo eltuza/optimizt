@@ -3,6 +3,57 @@ body {
 }
 
 .container {
-  margin: 50px auto;
+  margin: 50px 10%;
+}
+
+
+.main {
+  width: 60%;
   border: 1px solid #ccc;
+  margin-left: 50px;
+  padding: 10px;
+}
+
+
+
+/* Tasks */
+.task {
+  height: 30px;
+  padding-top: 5px;
+  font-size: 1.1em;
+
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  flex-wrap: nowrap;
+}
+
+.task .completed {
+  text-decoration: line-through;
+}
+
+.task span {
+  flex-grow: 1;
+  /*border-bottom: 1px solid #e7e7e7;*/
+}
+
+/* TaskEntry */
+.task-entry .form {
+  display: none;
+}
+
+.task-entry .action {
+  cursor: pointer;
+  color: #555;
+  padding: 8px 2px;
+}
+
+
+.task-entry.open .form {
+  display: block;
+}
+
+.task-entry.open .action {
+  display: none;
 }

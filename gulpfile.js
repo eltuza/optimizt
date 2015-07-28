@@ -110,7 +110,7 @@ gulp.task('bower', function() {
 });
 
 // Watch
-gulp.task('watch', ['html', 'fonts', 'bundle'], function() {
+gulp.task('watch', ['html', 'bundle'], function() {
 
     browserSync({
         notify: false,
