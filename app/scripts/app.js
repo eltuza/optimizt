@@ -4,6 +4,9 @@ var React = window.React = require('react'),
     ThemeManager = new mui.Styles.ThemeManager(),
     Task = require('./ui/Task.js'),
     TaskEntry = require('./ui/TaskEntry.js'),
+    AppBar =  mui.AppBar,
+    IconButton = mui.IconButton,
+    FontIcon = mui.FontIcon,
     mountNode = document.getElementById("optimizt");
 
 // The Following code is for Material UI (Material Design) to work.
@@ -24,7 +27,7 @@ var TodoApp = React.createClass({
   },
   getInitialState: function() {
     return {
-      items: ["Example task 1"]
+      items: [{name: "Example task", children: []}]
     };
   },
   _saveTask: function(taskName) {
@@ -39,7 +42,12 @@ var TodoApp = React.createClass({
 
     return (
       <div className="main">
-        {todos}
+        <AppBar
+            title="Tasks"
+            iconElementRight={<IconButton><FontIcon className="material-icons">arrow_drop_down</FontIcon></IconButton>}>
+        </AppBar>
+
+        { todos }
 
         <TaskEntry onSave={this._saveTask} />
       </div>

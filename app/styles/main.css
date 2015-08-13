@@ -6,19 +6,23 @@ body {
   margin: 50px 10%;
 }
 
+.container header h1 {
+  color: #E91E63;
+  padding: 5px 8px;
+  border-radius: 5px;
+}
+
 
 .main {
   width: 60%;
-  border: 1px solid #ccc;
+  border: 1px solid #B6B6B6;
   margin-left: 50px;
   padding: 10px;
 }
 
-
-
 /* Tasks */
 .task {
-  height: 30px;
+  height: 40px;
   padding-top: 5px;
   font-size: 1.1em;
 
@@ -33,25 +37,53 @@ body {
   text-decoration: line-through;
 }
 
-.task span {
+.task label {
   flex-grow: 1;
-  /*border-bottom: 1px solid #e7e7e7;*/
+  cursor: pointer;
+  padding-bottom: 2px;
+  border-bottom: 1px solid #B6B6B6;
 }
 
+
 /* TaskEntry */
+.task-entry {
+  margin-top: 5px;
+  width: 100%;
+
+}
+
+.task-entry .add {
+  display: flex;
+  flex-grow: 1;
+  align-items: center;
+  flex-direction: row;
+  margin-top 15px;
+  justify-content: flex-start;
+  padding-left: 40px;
+}
+
+.task-entry .add .button {
+}
+
 .task-entry .form {
-  display: none;
+  /*margin-left: 55px;*/
+  flex-grow: 1;
+  opacity: 0;
 }
 
 .task-entry .action {
   cursor: pointer;
   color: #555;
-  padding: 8px 2px;
+  padding: 10px 2px;
+  margin-top: 5px;
 }
 
+.task-entry.open.child .form {
+  margin-left: 30px;
+}
 
 .task-entry.open .form {
-  display: block;
+  opacity: 1;
 }
 
 .task-entry.open .action {

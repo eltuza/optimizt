@@ -4,9 +4,16 @@ var React = require('react'),
     mui = require('material-ui'),
     Checkbox = mui.Checkbox;
 
+var ReactPropTypes = React.PropTypes;
+var UniqeIdMixin = require('unique-id-mixin');
+
 var Task = React.createClass({
+  mixins: [ UniqeIdMixin ],
+  propTypes: {
+    task: ReactPropTypes.string.isRequired,
+  },
   getInitialState: function() {
-    return {completed: false};
+    return {completed: false, children: []};
   },
   // componentDidMount: function() {
   // },
@@ -17,23 +24,24 @@ var Task = React.createClass({
       completed: checked
     });
   },
+
   render: function() {
     return (
       <div className="task">
         <Checkbox
           name="completed"
           value="completed"
-          label=""
           style={{
             width: 'auto',
             display: 'inline-block'
           }}
+          id={ this.getNextHtmlFor() }
           onCheck={this.setCompleted}
           className="check" />
 
-        <span className={this.state.completed ? "completed" : ""} >
+        <label htmlFor={ this.getNextHtmlFor() } className={this.state.completed ? "completed" : ""} >
           {this.props.task}
-        </span>
+        </label>
       </div>
     );
   }
