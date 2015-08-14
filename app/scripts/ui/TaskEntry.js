@@ -12,7 +12,6 @@ var TAB_KEYCODE = 9;
 var TaskEntry = React.createClass({
   propTypes: {
     onSave: ReactPropTypes.func.isRequired,
-    // value: ReactPropTypes.string.isRequired
   },
 
   getInitialState: function() {
@@ -31,10 +30,10 @@ var TaskEntry = React.createClass({
    */
   hideForm: function() {
     var that = this;
-    setTimeout(function() {
-      that.setState(that.getInitialState());
-    }, 400);
+    this.setState(that.getInitialState());
+    // TODO: Add transition to hide slowly
   },
+
   onChange: function(e) {
     this.setState({text: e.target.value});
   },

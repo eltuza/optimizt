@@ -9,11 +9,18 @@ var React = window.React = require('react'),
     FontIcon = mui.FontIcon,
     mountNode = document.getElementById("optimizt");
 
+var AppStore = require('./stores/app-store.js');
+var AppActions = require('./actions/app-actions');
+
 // The Following code is for Material UI (Material Design) to work.
 var injectTapEventPlugin = require("react-tap-event-plugin");
 // Needed for onTouchTap. Can go away when react 1.0 release
 // Check this repo: https://github.com/zilverline/react-tap-event-plugin
 injectTapEventPlugin();
+
+function getTasks(){
+  return {items: AppStore.getTasks()}
+}
 
 
 var TodoApp = React.createClass({
@@ -26,28 +33,38 @@ var TodoApp = React.createClass({
     };
   },
   getInitialState: function() {
-    return {
-      items: [{name: "Example task", children: []}]
-    };
+    return getTasks();
   },
   _saveTask: function(taskName) {
-    var nextItems = this.state.items.concat([taskName]);
-    this.setState({items: nextItems});
+    // var nextItems = this.state.items.concat([taskName]);
+    // this.setState({items: nextItems});
+    AppActions.addTask({'name': taskName});
+  },
+  componentWillMount:function(){
+    AppStore.addChangeListener(this._onChange)
+  },
+  _onChange: function(){
+    this.setState(getTasks())
   },
   render: function() {
-    var todos = [];
-    for (var i = 0; i < this.state.items.length; i++) {
-      todos.push(<Task task={this.state.items[i]} />);
-    }
+    var tasks = this.state.items.map(function(task){
+      return (
+        <Task key={task.id} task={task} />
+      );
+    })
 
     return (
       <div className="main">
         <AppBar
             title="Tasks"
-            iconElementRight={<IconButton><FontIcon className="material-icons">arrow_drop_down</FontIcon></IconButton>}>
+            iconElementRight={
+              <IconButton>
+                <FontIcon className="material-icons">arrow_drop_down</FontIcon>
+              </IconButton>
+            }>
         </AppBar>
 
-        { todos }
+        { tasks }
 
         <TaskEntry onSave={this._saveTask} />
       </div>

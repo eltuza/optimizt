@@ -4,25 +4,21 @@ var React = require('react'),
     mui = require('material-ui'),
     Checkbox = mui.Checkbox;
 
-var ReactPropTypes = React.PropTypes;
 var UniqeIdMixin = require('unique-id-mixin');
+
+var AppActions = require('../actions/app-actions');
 
 var Task = React.createClass({
   mixins: [ UniqeIdMixin ],
   propTypes: {
-    task: ReactPropTypes.string.isRequired,
-  },
-  getInitialState: function() {
-    return {completed: false, children: []};
+    task: React.PropTypes.object.isRequired
   },
   // componentDidMount: function() {
   // },
   // componentWillUnmount: function() {
   // },
   setCompleted: function(e, checked) {
-    this.setState({
-      completed: checked
-    });
+    AppActions.setCompleted(this.props.task, checked);
   },
 
   render: function() {
@@ -39,8 +35,8 @@ var Task = React.createClass({
           onCheck={this.setCompleted}
           className="check" />
 
-        <label htmlFor={ this.getNextHtmlFor() } className={this.state.completed ? "completed" : ""} >
-          {this.props.task}
+        <label htmlFor={ this.getNextHtmlFor() } className={this.props.task.complete ? "completed" : ""} >
+          {this.props.task.name}
         </label>
       </div>
     );
