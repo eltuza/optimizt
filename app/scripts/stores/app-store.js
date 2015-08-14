@@ -18,8 +18,12 @@ for(var i=1; i<5; i++){
 }
 
 
-function _removeCompleted(index) {
-
+function _removeCompleted() {
+  for (var i = 0; i < _tasks.length; i++) {
+    if(_tasks[i].complete == true) {
+      _tasks.splice(i, 1);
+    }
+  }
 }
 
 function _setParent(index) {
@@ -52,8 +56,10 @@ function _findInArr(id, arr) {
 function _applyToAll(obj, action) {
   action.call(obj);
 
-  for (var i=0; i < obj.children.length; i++) {
-    _applyToAll(action.call(obj.children[i], action));
+  if (obj.children) {
+    for (var i=0; i < obj.children.length; i++) {
+      _applyToAll(action.call(obj.children[i]));
+    }
   }
 }
 
@@ -61,7 +67,6 @@ function _applyToAll(obj, action) {
 function _addTask(task){
   console.log("task added", task);
   _tasks.push(task);
-  console.log(_tasks);
 }
 
 // function _cartTotals(){

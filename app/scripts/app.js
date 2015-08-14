@@ -5,8 +5,7 @@ var React = window.React = require('react'),
     Task = require('./ui/Task.js'),
     TaskEntry = require('./ui/TaskEntry.js'),
     AppBar =  mui.AppBar,
-    IconButton = mui.IconButton,
-    FontIcon = mui.FontIcon,
+    FlatButton = mui.FlatButton,
     mountNode = document.getElementById("optimizt");
 
 var AppStore = require('./stores/app-store.js');
@@ -40,8 +39,11 @@ var TodoApp = React.createClass({
     // this.setState({items: nextItems});
     AppActions.addTask({'name': taskName});
   },
-  componentWillMount:function(){
+  componentWillMount: function() {
     AppStore.addChangeListener(this._onChange)
+  },
+  onClearCompleted: function(e) {
+    AppActions.removeCompleted();
   },
   _onChange: function(){
     this.setState(getTasks())
@@ -57,10 +59,9 @@ var TodoApp = React.createClass({
       <div className="main">
         <AppBar
             title="Tasks"
+            ref="appbar"
             iconElementRight={
-              <IconButton>
-                <FontIcon className="material-icons">arrow_drop_down</FontIcon>
-              </IconButton>
+              <FlatButton onTouchTap={this.onClearCompleted} label="Remove completed" />
             }>
         </AppBar>
 
