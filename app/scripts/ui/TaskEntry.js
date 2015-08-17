@@ -4,19 +4,14 @@ var React = require('react'),
     mui = require('material-ui'),
     TextField = mui.TextField;
 
-var AppStore = require('../stores/app-store.js');
-
-var ReactPropTypes = React.PropTypes;
+var AppStore = require('../stores/app-store.js'),
+    AppActions = require('../actions/app-actions.js');
 
 var TAB_KEYCODE = 9;
 var INPUT_PLACEHOLDER = "What do you need to do?";
 
 
 var TaskEntry = React.createClass({
-  propTypes: {
-    onSave: ReactPropTypes.func.isRequired,
-  },
-
   getInitialState: function() {
     return {open: false, text: '', indentation: 0};
   },
@@ -51,7 +46,9 @@ var TaskEntry = React.createClass({
       return;
     }
 
-    this.props.onSave(this.state.text, this.state.indentation);
+    var id = Math.floor(Math.random() * 90000) + 10000;
+    AppActions.addTask({'id': id, 'name': this.state.text, 'indentation': this.state.indentation});
+
     this.setState({text: ''});
   },
   /**

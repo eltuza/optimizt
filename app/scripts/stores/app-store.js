@@ -128,14 +128,10 @@ var AppStore = assign(EventEmitter.prototype, {
     switch(action.actionType){
       case AppConstants.ADD_TASK:
         var parentId = _getParentId(payload.action.task.indentation);
-        var task = {
-          'id': payload.action.task.id,
-          'name':'Task #' + payload.action.task.id,
-          'complete': false,
-          'parent': parentId,
-          'indentation': payload.action.task.indentation,
-          'children': []
-        };
+        var task = payload.action.task;
+        task['complete'] = false;
+        task['children'] = [];
+        task['parent'] = parentId;
         _addTask(task);
         break;
 

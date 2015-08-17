@@ -34,10 +34,6 @@ var TodoApp = React.createClass({
   getInitialState: function() {
     return getTasks();
   },
-  _saveTask: function(taskName, indentation) {
-    var id = Math.floor(Math.random() * 90000) + 10000;
-    AppActions.addTask({'id': id, 'name': taskName, 'indentation': indentation});
-  },
   componentWillMount: function() {
     AppStore.addChangeListener(this._onChange)
   },
@@ -66,7 +62,7 @@ var TodoApp = React.createClass({
 
         { tasks }
 
-        <TaskEntry onSave={this._saveTask} />
+        <TaskEntry />
       </div>
     );
   }
