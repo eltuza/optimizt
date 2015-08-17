@@ -31,6 +31,13 @@ body {
   justify-content: flex-start;
   align-items: center;
   flex-wrap: nowrap;
+
+  border-bottom: 1px solid #B6B6B6;
+
+  -webkit-transition: all 0.5s ease-in-out;
+  -moz-transition: all 0.5s ease-in-out;
+  -ms-transition: all 0.5s ease-in-out;
+  transition: all 0.5s ease-in-out;
 }
 
 .task .completed {
@@ -41,7 +48,50 @@ body {
   flex-grow: 1;
   cursor: pointer;
   padding-bottom: 2px;
-  border-bottom: 1px solid #B6B6B6;
+}
+
+.task-container {
+  -webkit-transition: all 0.5s ease-in-out;
+  -moz-transition: all 0.5s ease-in-out;
+  -ms-transition: all 0.5s ease-in-out;
+  transition: all 0.5s ease-in-out;
+}
+
+.task:hover {
+  background-color: #f7f7f7;
+}
+
+.task-container > .task > .handle {
+  transition: all 0.5s ease-in-out;
+  -webkit-transform:rotate(90deg);
+  -moz-transform:rotate(90deg);
+  -o-transform:rotate(90deg);
+  transform:rotate(90deg);
+  font-size: 1.2em;
+  font-weight: bold;
+  cursor: pointer;
+  width: 12px;
+  margin-right: 10px;
+}
+
+.task-container.contracted > .task > .handle {
+  display:block;
+  -webkit-transform:rotate(0deg);
+  -moz-transform:rotate(0deg);
+  -o-transform:rotate(0deg);
+  transform:rotate(0deg);
+  padding:0;
+}
+
+
+.task-container > .children {
+  max-height: 1500px;
+  overflow: hidden;
+  transition: all 0.5s ease-in-out;
+}
+
+.task-container.contracted > .children {
+  max-height: 0;
 }
 
 

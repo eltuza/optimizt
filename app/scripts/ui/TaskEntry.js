@@ -15,7 +15,7 @@ var TaskEntry = React.createClass({
   },
 
   getInitialState: function() {
-    return {open: false, text: '', child: false};
+    return {open: false, text: '', indentation: 0};
   },
   /**
    * Called when the user clicks on the Add Task action.

@@ -5,6 +5,18 @@ var EventEmitter = require('events').EventEmitter;
 
 var CHANGE_EVENT = 'change';
 
+var defChildren = [];
+
+for(var j=10; j<13; j++){
+  defChildren.push({
+    'id': j,
+    'name':'ChildTask #' + j,
+    'complete': false,
+    'parent': null,
+    'children': []
+  });
+}
+
 var _tasks = [];
 
 for(var i=1; i<5; i++){
@@ -13,17 +25,28 @@ for(var i=1; i<5; i++){
     'name':'Task #' + i,
     'complete': false,
     'parent': null,
-    'children': []
+    'children': defChildren.slice(0)
   });
 }
 
+console.log(_tasks);
 
-function _removeCompleted() {
-  for (var i = 0; i < _tasks.length; i++) {
-    if(_tasks[i].complete == true) {
-      _tasks.splice(i, 1);
+
+function _removeCompleted(taskArray) {
+  var filteredTasks = taskArray.filter(function(task) {
+    if (task.complete) {
+      return false;
     }
-  }
+
+    // Apply recursively to children.
+    if (task.children) {
+      task.children = _removeCompleted(task.children);
+    }
+
+    return true;
+  });
+
+  return filteredTasks;
 }
 
 function _setParent(index) {
@@ -31,7 +54,6 @@ function _setParent(index) {
 }
 
 function _setCompleted(task, isCompleted) {
-  // task.complete = isCompleted;
   _applyToAll(task, function() {
     this.complete = isCompleted;
   })
@@ -58,7 +80,7 @@ function _applyToAll(obj, action) {
 
   if (obj.children) {
     for (var i=0; i < obj.children.length; i++) {
-      _applyToAll(action.call(obj.children[i]));
+      _applyToAll(obj.children[i], action);
     }
   }
 }
@@ -103,7 +125,7 @@ var AppStore = assign(EventEmitter.prototype, {
         break;
 
       case AppConstants.REMOVE_COMPLETED:
-        _removeCompleted(payload.action.index);
+        _tasks = _removeCompleted(_tasks);
         break;
 
       case AppConstants.SET_COMPLETED:
