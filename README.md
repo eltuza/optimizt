@@ -1,6 +1,6 @@
 # optimizt
 Optimize productivity with a task tracker.
-Implemented with [React](http://facebook.github.io/react/) and [Material UI](http://material-ui.com/)
+Proof of concept to ramp up with [React](http://facebook.github.io/react/), the [Flux](https://facebook.github.io/flux/docs/overview.html) architecture and [Material UI](http://material-ui.com/).
 
 ### Version
 0.0.1
