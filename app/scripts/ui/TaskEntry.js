@@ -4,9 +4,12 @@ var React = require('react'),
     mui = require('material-ui'),
     TextField = mui.TextField;
 
+var AppStore = require('../stores/app-store.js');
+
 var ReactPropTypes = React.PropTypes;
 
 var TAB_KEYCODE = 9;
+var INPUT_PLACEHOLDER = "What do you need to do?";
 
 
 var TaskEntry = React.createClass({
@@ -48,19 +51,25 @@ var TaskEntry = React.createClass({
       return;
     }
 
-    this.props.onSave(this.state.text);
+    this.props.onSave(this.state.text, this.state.indentation);
     this.setState({text: ''});
   },
   /**
    * Listens for indentation chars and sets state.
    */
   _onKeyDown: function(e) {
-    if (e.keyCode === TAB_KEYCODE) {
+    var indentation;
+    if (this.state.open && e.keyCode === TAB_KEYCODE) {
       e.preventDefault();
+
       if (e.shiftKey) {
-        this.setState({child: false});
+        indentation = this.state.indentation <= 1 ? 0 : this.state.indentation - 1;
+        this.setState({indentation: indentation});
       } else {
-        this.setState({child: true});
+        var maxAllowedIndentation = AppStore.getLastIndentationLevel() + 1;
+        indentation = this.state.indentation + 1;
+        indentation = indentation > maxAllowedIndentation ? maxAllowedIndentation : indentation;
+        this.setState({indentation: indentation});
       }
     }
   },
@@ -69,11 +78,16 @@ var TaskEntry = React.createClass({
     var classes = cx({
       'task-entry': true,
       'open': this.state.open,
-      'child': this.state.child
+      //'child': this.state.child
     });
 
+    var st = {
+      "margin-left": 30 * this.state.indentation + "px"
+    };
+
+
     return (
-      <div className={classes}>
+      <div className={classes} style={st}>
         <div className="add">
           <a className="action" onClick={this.showForm}>
             &#43; Add task
@@ -81,7 +95,7 @@ var TaskEntry = React.createClass({
 
           <div className="form">
             <form onSubmit={this.handleSubmit}>
-              <TextField hintText="What do you need to do?"
+              <TextField hintText={INPUT_PLACEHOLDER}
                 onChange={this.onChange}
                 onBlur={this.hideForm}
                 onKeyDown={this._onKeyDown}

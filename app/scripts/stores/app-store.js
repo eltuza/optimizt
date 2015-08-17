@@ -5,17 +5,6 @@ var EventEmitter = require('events').EventEmitter;
 
 var CHANGE_EVENT = 'change';
 
-var defChildren = [];
-
-for(var j=10; j<13; j++){
-  defChildren.push({
-    'id': j,
-    'name':'ChildTask #' + j,
-    'complete': false,
-    'parent': null,
-    'children': []
-  });
-}
 
 var _tasks = [];
 
@@ -25,11 +14,9 @@ for(var i=1; i<5; i++){
     'name':'Task #' + i,
     'complete': false,
     'parent': null,
-    'children': defChildren.slice(0)
+    'children': []
   });
 }
-
-console.log(_tasks);
 
 
 function _removeCompleted(taskArray) {
@@ -85,20 +72,24 @@ function _applyToAll(obj, action) {
   }
 }
 
+function _getParentId(indentation) {
+  var lastTask = _tasks[_tasks.length - 1];
+
+  if (!indentation) {
+    return null;
+  }
+
+  while (indentation-- && lastTask.children && lastTask.children.length) {
+    lastTask = lastTask.children[lastTask.children.length - 1];
+  }
+  return lastTask.id;
+}
 
 function _addTask(task){
   console.log("task added", task);
-  _tasks.push(task);
+  var parent = _findInArr(task.parent, _tasks);
+  parent ? parent.children.push(task) : _tasks.push(task);
 }
-
-// function _cartTotals(){
-//   var qty =0, total = 0;
-//   _cartItems.forEach(function(cartItem){
-//     qty+=cartItem.qty;
-//     total+=cartItem.qty*cartItem.cost;
-//   });
-//   return {'qty': qty, 'total': total};
-// }
 
 var AppStore = assign(EventEmitter.prototype, {
   emitChange: function(){
@@ -116,12 +107,33 @@ var AppStore = assign(EventEmitter.prototype, {
   getTasks: function(){
     return _tasks
   },
+  /**
+   * Helps determine the indentation levels that the TaskEntry can take.
+   */
+  getLastIndentationLevel: function() {
+    var indentation = 0;
+    var lastTask = _tasks[_tasks.length - 1];
+    while (lastTask.children && lastTask.children.length) {
+      lastTask = lastTask.children[lastTask.children.length - 1];
+      indentation++;
+    }
+    return indentation;
+  },
 
   dispatcherIndex: AppDispatcher.register(function(payload){
     var action = payload.action; // this is the action from handleViewAction
     switch(action.actionType){
       case AppConstants.ADD_TASK:
-        _addTask(payload.action.task);
+        var parentId = _getParentId(payload.action.task.indentation);
+        var task = {
+          'id': payload.action.task.id,
+          'name':'Task #' + payload.action.task.id,
+          'complete': false,
+          'parent': parentId,
+          'indentation': payload.action.task.indentation,
+          'children': []
+        };
+        _addTask(task);
         break;
 
       case AppConstants.REMOVE_COMPLETED:

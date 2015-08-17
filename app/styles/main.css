@@ -88,6 +88,7 @@ body {
   max-height: 1500px;
   overflow: hidden;
   transition: all 0.5s ease-in-out;
+  margin-left: 30px;
 }
 
 .task-container.contracted > .children {
@@ -109,14 +110,10 @@ body {
   flex-direction: row;
   margin-top 15px;
   justify-content: flex-start;
-  padding-left: 40px;
-}
-
-.task-entry .add .button {
+  padding-left: 30px;
 }
 
 .task-entry .form {
-  /*margin-left: 55px;*/
   flex-grow: 1;
   opacity: 0;
 }

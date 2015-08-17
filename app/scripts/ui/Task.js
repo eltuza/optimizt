@@ -34,11 +34,10 @@ var Task = React.createClass({
   },
 
   render: function() {
+    var children = '';
 
-    var children = "";
     if(this.props.task.children) {
       children = this.props.task.children.map(function (childTask) {
-        console.log(childTask);
         return (
           <Task key={childTask.id} task={childTask} />
         );
@@ -59,7 +58,6 @@ var Task = React.createClass({
             id={ this.props.task.id }
             onCheck={this.setCompleted}
             className="check" />
-
 
           <label htmlFor={ this.props.task.id } className={this.props.task.complete ? "completed" : ""} >
             {this.props.task.name}
