@@ -51,6 +51,7 @@ var Task = React.createClass({
           <Checkbox
             name="completed"
             value="completed"
+            defaultChecked={this.props.task.complete}
             style={{
               width: 'auto',
               display: 'inline-block'
