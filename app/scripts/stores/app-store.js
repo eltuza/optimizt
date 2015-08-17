@@ -79,9 +79,12 @@ function _getParentId(indentation) {
     return null;
   }
 
-  while (indentation-- && lastTask.children && lastTask.children.length) {
-    lastTask = lastTask.children[lastTask.children.length - 1];
+  if (indentation > 1) {
+    while (indentation-- && lastTask.children && lastTask.children.length) {
+      lastTask = lastTask.children[lastTask.children.length - 1];
+    }
   }
+
   return lastTask.id;
 }
 
