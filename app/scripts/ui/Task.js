@@ -33,6 +33,10 @@ var Task = React.createClass({
     AppActions.setCompleted(this.props.task, checked);
   },
 
+  hasChildren: function() {
+    return this.props.task.children && this.props.task.children.length;
+  },
+
   render: function() {
     var children = '';
 
@@ -47,7 +51,7 @@ var Task = React.createClass({
     return (
       <div className={this.state.contracted ? "task-container contracted" : "task-container"}>
         <div className="task">
-          <a className="handle" onClick={this.toggleDropdown}>&rsaquo;</a>
+          <a className={this.hasChildren() ? "handle" : "handle hidden"} onClick={this.toggleDropdown}>&rsaquo;</a>
           <Checkbox
             name="completed"
             value="completed"
