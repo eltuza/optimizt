@@ -115,22 +115,21 @@ body {
   margin-top 15px;
   justify-content: flex-start;
   padding-left: 30px;
+  overflow: hidden;
 }
 
-.task-entry .form {
-  flex-grow: 1;
-  opacity: 0;
-}
 
 .task-entry .action {
   cursor: pointer;
   color: #555;
   padding: 10px 2px;
   margin-top: 5px;
+  width: 100%;
 }
 
-.task-entry.open.child .form {
-  margin-left: 30px;
+.task-entry .form {
+  flex-grow: 1;
+  opacity: 0;
 }
 
 .task-entry.open .form {

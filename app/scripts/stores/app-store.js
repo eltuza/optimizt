@@ -8,16 +8,6 @@ var CHANGE_EVENT = 'change';
 
 var _tasks = [];
 
-for(var i=1; i<5; i++){
-  _tasks.push({
-    'id': i,
-    'name':'Task #' + i,
-    'complete': false,
-    'parent': null,
-    'children': []
-  });
-}
-
 
 function _removeCompleted(taskArray) {
   var filteredTasks = taskArray.filter(function(task) {
@@ -124,7 +114,7 @@ var AppStore = assign(EventEmitter.prototype, {
   },
 
   dispatcherIndex: AppDispatcher.register(function(payload){
-    var action = payload.action; // this is the action from handleViewAction
+    var action = payload.action;
     switch(action.actionType){
       case AppConstants.ADD_TASK:
         var parentId = _getParentId(payload.action.task.indentation);
