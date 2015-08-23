@@ -30,7 +30,6 @@
     "react-tools": "latest",
     "reactify": "latest",
     "strip-debug": "^1.0.1",
-    "unique-id-mixin": "node_modules/unique-id-mixin",
     "vinyl-source-stream": "^1.0.0",
     "watchify": "~2.1"
   },

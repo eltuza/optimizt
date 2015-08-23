@@ -75,7 +75,7 @@ gulp.task('clean', function(cb) {
 });
 
 // Bundle
-gulp.task('bundle', ['styles', 'scripts', 'bower'], function() {
+gulp.task('bundle', ['styles', 'scripts'], function() {
     return gulp.src('./app/*.html')
         .pipe($.useref.assets())
         .pipe($.useref.restore())
@@ -83,7 +83,7 @@ gulp.task('bundle', ['styles', 'scripts', 'bower'], function() {
         .pipe(gulp.dest('dist'));
 });
 
-gulp.task('buildBundle', ['styles', 'buildScripts', 'moveLibraries', 'bower'], function() {
+gulp.task('buildBundle', ['styles', 'buildScripts', 'moveLibraries'], function() {
     return gulp.src('./app/*.html')
         .pipe($.useref.assets())
         .pipe($.useref.restore())
@@ -97,16 +97,6 @@ gulp.task('moveLibraries',['clean'], function(){
   // preserving the folder structure
   gulp.src(['./app/scripts/**/*.js'], { base: './app/scripts/' })
   .pipe(gulp.dest('dist/scripts'));
-});
-
-
-// Bower helper
-gulp.task('bower', function() {
-    gulp.src('app/bower_components/**/*.js', {
-            base: 'app/bower_components'
-        })
-        .pipe(gulp.dest('dist/bower_components/'));
-
 });
 
 // Watch
