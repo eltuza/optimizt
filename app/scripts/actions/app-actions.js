@@ -8,10 +8,9 @@ var AppActions = {
       task: task
     })
   },
-  removeCompleted: function(index){
+  removeCompleted: function(){
     AppDispatcher.handleViewAction({
-      actionType: AppConstants.REMOVE_COMPLETED,
-      index: index
+      actionType: AppConstants.REMOVE_COMPLETED
     })
   },
   setCompleted: function(task, isCompleted){
@@ -21,10 +20,11 @@ var AppActions = {
       isCompleted: isCompleted
     })
   },
-  setParent: function(index){
+  indent: function(task, moveForward){
     AppDispatcher.handleViewAction({
-      actionType: AppConstants.SET_PARENT,
-      index: index
+      actionType: AppConstants.INDENT,
+      task: task,
+      moveForward: moveForward
     })
   }
 };

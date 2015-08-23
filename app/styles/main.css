@@ -50,6 +50,15 @@ body {
   padding-bottom: 2px;
 }
 
+.task span {
+  visibility: hidden;
+}
+
+.task span.show {
+  visibility: visible;
+  cursor: pointer;
+}
+
 .task-container {
   -webkit-transition: all 0.5s ease-in-out;
   -moz-transition: all 0.5s ease-in-out;

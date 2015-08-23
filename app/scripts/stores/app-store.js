@@ -26,7 +26,7 @@ function _removeCompleted(taskArray) {
   return filteredTasks;
 }
 
-function _setParent(index) {
+function _indent(task, moveForward) {
 
 }
 
@@ -36,21 +36,33 @@ function _setCompleted(task, isCompleted) {
   })
 }
 
-function _getTask(index) {
-  return _findInArr(index, _tasks);
+function _getTask(id) {
+  return _findInArr(id, _tasks, function(arr, i) {
+    return arr[i];
+  });
 }
 
-function _findInArr(id, arr) {
+function _getImmediatePrecedingSibling(id) {
+  return _findInArr(id, _tasks, function(arr, i) {
+    if (i) {
+      return arr[i];
+    }
+    return null;
+  });
+}
+
+function _findInArr(id, arr, returnFunc) {
   for (var i=0; i < arr.length; i++) {
     if (arr[i].id == id) {
-      return arr[i];
+      return returnFunc(arr, i);
     } else {
-      var childrenFound = _findInArr(id, arr[i].children);
+      var childrenFound = _findInArr(id, arr[i].children, returnFunc);
       if (childrenFound) return childrenFound;
     }
   }
   return false;
 }
+
 
 function _applyToAll(obj, action) {
   action.call(obj);
@@ -62,7 +74,12 @@ function _applyToAll(obj, action) {
   }
 }
 
-function _getParentId(indentation) {
+/**
+ * Seek into task hierarchy for the last element up to the given indentation level.
+ * Returns the parent id of the last task where a newly created task through
+ * TaskEntry should be appended.
+ */
+function _getLastTaskParentId(indentation) {
   var lastTask = _tasks[_tasks.length - 1];
 
   if (!indentation) {
@@ -78,9 +95,47 @@ function _getParentId(indentation) {
   return lastTask.id;
 }
 
+function _indent(task, moveForward) {
+  if (moveForward) {
+    _reparentTask(task, _getImmediatePrecedingSibling(task.id));
+  } else {
+    var oldParent = _getTask(task.parent, _tasks);
+    var newParent = _getTask(oldParent.parent, _tasks);
+    _reparentTask(task, newParent || null, oldParent);
+  }
+}
+
+function _reparentTask(task, parent, afterSibling) {
+  var siblingsArray;
+  if (parent) {
+    _removeTaskFromArray(task, parent.children);
+    task.parent = parent.id;
+    siblingsArray = parent.children;
+  } else {
+    _removeTaskFromArray(task, _tasks);
+    task.parent = null;
+    siblingsArray = _tasks;
+  }
+
+  if (afterSibling) {
+    for(var i = 0; i < siblingsArray.length; i++) {
+      if (afterSibling.id == siblingsArray[i].id) {
+        siblingsArray.splice(i+1, 0, task);
+      }
+    }
+  } else {
+    siblingsArray.push(task);
+  }
+}
+
+function _removeTaskFromArray(task, arr) {
+  arr.filter(function(taskObj) {
+    return taskObj.id != task.id;
+  })
+}
+
 function _addTask(task){
-  console.log("task added", task);
-  var parent = _findInArr(task.parent, _tasks);
+  var parent = _getTask(task.parent, _tasks);
   parent ? parent.children.push(task) : _tasks.push(task);
 }
 
@@ -112,12 +167,23 @@ var AppStore = assign(EventEmitter.prototype, {
     }
     return indentation;
   },
+  /**
+   * Returns the parent ID under which the current element can be indented or
+   * null if it can't be indented.
+   */
+  getIndentParent: function(id) {
+    var sibling = _getImmediatePrecedingSibling(id);
+    if (sibling) {
+      return sibling.id;
+    }
+    return 0;
+  },
 
   dispatcherIndex: AppDispatcher.register(function(payload){
     var action = payload.action;
     switch(action.actionType){
       case AppConstants.ADD_TASK:
-        var parentId = _getParentId(payload.action.task.indentation);
+        var parentId = _getLastTaskParentId(payload.action.task.indentation);
         var task = payload.action.task;
         task['complete'] = false;
         task['children'] = [];
@@ -133,8 +199,8 @@ var AppStore = assign(EventEmitter.prototype, {
         _setCompleted(payload.action.task, payload.action.isCompleted);
         break;
 
-      case AppConstants.SET_PARENT:
-        _setParent(payload.action.index);
+      case AppConstants.INDENT:
+        _indent(payload.action.task, payload.action.moveForward);
         break;
     }
 

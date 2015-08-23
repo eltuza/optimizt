@@ -4,7 +4,8 @@ var React = require('react'),
     mui = require('material-ui'),
     Checkbox = mui.Checkbox;
 
-var AppActions = require('../actions/app-actions');
+var AppStore = require('../stores/app-store.js'),
+    AppActions = require('../actions/app-actions');
 
 var Task = React.createClass({
   propTypes: {
@@ -37,6 +38,19 @@ var Task = React.createClass({
     return this.props.task.children && this.props.task.children.length;
   },
 
+  canIndent: function() {
+    return AppStore.getIndentParent(this.props.task.id);
+  },
+
+  canUnindent: function() {
+    return this.props.task.parent != null;
+  },
+  indent: function() {
+    AppActions.indent(this.props.task, true);
+  },
+  unindent: function() {
+    AppActions.indent(this.props.task, false);
+  },
   render: function() {
     var children = '';
 
@@ -67,6 +81,8 @@ var Task = React.createClass({
           <label htmlFor={ this.props.task.id } className={this.props.task.complete ? "completed" : ""} >
             {this.props.task.name}
           </label>
+          <span className={this.canUnindent() ? "show" : ""} onClick={this.unindent}>&lt;</span>
+          <span className={this.canIndent() ? "show" : ""} onClick={this.indent}>&gt;</span>
         </div>
         <div className="children" ref="children">
           { children }
