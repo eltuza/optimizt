@@ -52,11 +52,18 @@ body {
 
 .task span {
   visibility: hidden;
+  padding: 2px 4px;
+  border-radius: 3px;
 }
 
 .task span.show {
   visibility: visible;
   cursor: pointer;
+}
+
+.task span.show:hover {
+  background-color: #e7e7e7;
+
 }
 
 .task-container {
