@@ -9,33 +9,9 @@ var CHANGE_EVENT = 'change';
 var _tasks = [];
 
 
-function _removeCompleted(taskArray) {
-  var filteredTasks = taskArray.filter(function(task) {
-    if (task.complete) {
-      return false;
-    }
-
-    // Apply recursively to children.
-    if (task.children) {
-      task.children = _removeCompleted(task.children);
-    }
-
-    return true;
-  });
-
-  return filteredTasks;
-}
-
-function _indent(task, moveForward) {
-
-}
-
-function _setCompleted(task, isCompleted) {
-  _applyToAll(task, function() {
-    this.complete = isCompleted;
-  })
-}
-
+/**
+ * Recursively search through map hierarchy to find a task for the given @id.
+ */
 function _getTask(id) {
   return _findInArr(id, _tasks, function(arr, i) {
     return arr[i];
@@ -45,12 +21,16 @@ function _getTask(id) {
 function _getImmediatePrecedingSibling(id) {
   return _findInArr(id, _tasks, function(arr, i) {
     if (i) {
-      return arr[i];
+      return arr[i-1];
     }
     return null;
   });
 }
 
+/**
+ * Recursively search through @arr for the element with the id property that
+ * equals @id, and apply the @returnFunc to the found element.
+ */
 function _findInArr(id, arr, returnFunc) {
   for (var i=0; i < arr.length; i++) {
     if (arr[i].id == id) {
@@ -60,16 +40,18 @@ function _findInArr(id, arr, returnFunc) {
       if (childrenFound) return childrenFound;
     }
   }
-  return false;
+  return null;
 }
 
+/**
+ * Applies @action function to @task and all its children.
+ */
+function _applyToAll(task, action) {
+  action.call(task);
 
-function _applyToAll(obj, action) {
-  action.call(obj);
-
-  if (obj.children) {
-    for (var i=0; i < obj.children.length; i++) {
-      _applyToAll(obj.children[i], action);
+  if (task.children) {
+    for (var i=0; i < task.children.length; i++) {
+      _applyToAll(task.children[i], action);
     }
   }
 }
@@ -91,31 +73,42 @@ function _getLastTaskParentId(indentation) {
       lastTask = lastTask.children[lastTask.children.length - 1];
     }
   }
-
   return lastTask.id;
 }
 
+/**
+ * Handles both indent and unindent action depending on @moveForward value.
+ */
 function _indent(task, moveForward) {
+  var oldParent = _getTask(task.parent, _tasks);
   if (moveForward) {
-    _reparentTask(task, _getImmediatePrecedingSibling(task.id));
+    var upperSibling = _getImmediatePrecedingSibling(task.id);
+    _reparentTask(task, upperSibling);
   } else {
-    var oldParent = _getTask(task.parent, _tasks);
     var newParent = _getTask(oldParent.parent, _tasks);
-    _reparentTask(task, newParent || null, oldParent);
+    _reparentTask(task, newParent, oldParent);
   }
 }
 
+/**
+ * Given a @task, it will remove it from the current position and reparent it
+ * to be child of @parent and optionally inserted after @afterSibling.
+ * @param {Object} task The task to be reparented.
+ * @param {Object} parent The parent
+ * @param {Object} afterSibling The sibling after which it should be inserted.
+ */
 function _reparentTask(task, parent, afterSibling) {
   var siblingsArray;
   if (parent) {
-    _removeTaskFromArray(task, parent.children);
     task.parent = parent.id;
     siblingsArray = parent.children;
   } else {
-    _removeTaskFromArray(task, _tasks);
     task.parent = null;
     siblingsArray = _tasks;
   }
+
+  // First remove the current action from the outdated position in the array.
+  _removeTaskFromArray(task, siblingsArray);
 
   if (afterSibling) {
     for(var i = 0; i < siblingsArray.length; i++) {
@@ -128,15 +121,47 @@ function _reparentTask(task, parent, afterSibling) {
   }
 }
 
+/**
+ * Recursively search the @arr array and remove the @task item.
+ */
 function _removeTaskFromArray(task, arr) {
-  arr.filter(function(taskObj) {
-    return taskObj.id != task.id;
-  })
+  _findInArr(task.id, _tasks, function(arr, i) {
+    arr.splice(i, 1);
+  });
 }
 
+/**
+ * Adds a @task to the tasks list.
+ */
 function _addTask(task){
   var parent = _getTask(task.parent, _tasks);
   parent ? parent.children.push(task) : _tasks.push(task);
+}
+
+/**
+ * Removes all completed tasks from the @taskArray
+ */
+function _removeCompleted(taskArray) {
+  var filteredTasks = taskArray.filter(function(task) {
+    if (task.complete) {
+      return false;
+    }
+
+    // Apply recursively to children.
+    if (task.children) {
+      task.children = _removeCompleted(task.children);
+    }
+
+    return true;
+  });
+
+  return filteredTasks;
+}
+
+function _setCompleted(task, isCompleted) {
+  _applyToAll(task, function() {
+    this.complete = isCompleted;
+  })
 }
 
 var AppStore = assign(EventEmitter.prototype, {
@@ -155,6 +180,7 @@ var AppStore = assign(EventEmitter.prototype, {
   getTasks: function(){
     return _tasks
   },
+
   /**
    * Helps determine the indentation levels that the TaskEntry can take.
    */
@@ -167,6 +193,7 @@ var AppStore = assign(EventEmitter.prototype, {
     }
     return indentation;
   },
+
   /**
    * Returns the parent ID under which the current element can be indented or
    * null if it can't be indented.
@@ -182,6 +209,7 @@ var AppStore = assign(EventEmitter.prototype, {
   dispatcherIndex: AppDispatcher.register(function(payload){
     var action = payload.action;
     switch(action.actionType){
+      // Create a task object and dispatch the task creation action.
       case AppConstants.ADD_TASK:
         var parentId = _getLastTaskParentId(payload.action.task.indentation);
         var task = payload.action.task;
@@ -205,7 +233,6 @@ var AppStore = assign(EventEmitter.prototype, {
     }
 
     AppStore.emitChange();
-
     return true;
   })
 });
